@@ -875,13 +875,11 @@ void main() {
         ),
       ));
 
-      final animatedContainer = tester.widget<AnimatedContainer>(
-        find.byType(AnimatedContainer).first,
+      final glass = tester.widget<GlassContainer>(
+        find.byType(GlassContainer).first,
       );
-      expect(
-        animatedContainer.constraints,
-        const BoxConstraints.tightFor(width: 200, height: 56),
-      );
+      expect(glass.width, 200);
+      expect(glass.height, 56);
     });
   });
 
@@ -1765,8 +1763,8 @@ void main() {
   // MagoPopoverPosition enum
   // ──────────────────────────────────────────────────────────────────────────
   group('MagoPopoverPosition', () {
-    test('has all 9 positions', () {
-      expect(MagoPopoverPosition.values.length, 9);
+    test('has all 13 positions', () {
+      expect(MagoPopoverPosition.values.length, 13);
     });
   });
 
