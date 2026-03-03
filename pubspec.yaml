@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   cached_network_image: ^3.4.1
-  file_picker: ^8.3.7
+  file_picker: ^8.3.7              # was ^10.3.10
   flutter_cache_manager: ^3.4.1
   flutter_inappwebview: ^6.1.5
   flutter_svg: ^2.0.17
@@ -25,9 +25,9 @@ dependencies:
   media_kit_libs_android_video: ^1.3.8
   media_kit_libs_ios_video: ^1.1.4
   path_provider: ^2.1.5
-  pdfrx: ^2.1.3
-  pdfrx_engine: ^0.1.12
-  permission_handler: ^11.3.1
+  pdfrx: ^2.1.3                    # was ^1.0.98
+  pdfrx_engine: ^0.1.12            # was ^0.3.0
+  permission_handler: ^11.3.1      # was ^12.0.1
   pretty_qr_code: ^3.3.0
   three_js: ^0.2.7
   three_js_controls: ^0.2.2
