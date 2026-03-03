@@ -22,6 +22,9 @@ class MagoEmailChipInput extends StatefulWidget {
   final bool autofocus;
   final bool commitOnFocusLost;
 
+  final TextAlign textAlign;
+  final TextCapitalization textCapitalization;
+
   const MagoEmailChipInput({
     super.key,
     this.initialEmails = const [],
@@ -36,6 +39,8 @@ class MagoEmailChipInput extends StatefulWidget {
     this.chipDeleteColor,
     this.autofocus = false,
     this.commitOnFocusLost = true,
+    this.textAlign = TextAlign.start,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   @override
@@ -178,6 +183,8 @@ class _MagoEmailChipInputState extends State<MagoEmailChipInput> {
                 controller: _controller,
                 focusNode: _focusNode,
                 autofocus: widget.autofocus,
+                textAlign: widget.textAlign,
+                textCapitalization: widget.textCapitalization,
                 style: textStyle,
                 decoration: InputDecoration(
                   isDense: true,

@@ -32,6 +32,9 @@ class MagoSearchDropdown<T> extends StatefulWidget {
 
   final bool showClearButton;
 
+  final TextAlign textAlign;
+  final TextCapitalization textCapitalization;
+
   const MagoSearchDropdown({
     super.key,
     required this.items,
@@ -49,6 +52,8 @@ class MagoSearchDropdown<T> extends StatefulWidget {
     this.width,
     this.maxDropdownHeight = 260,
     this.showClearButton = true,
+    this.textAlign = TextAlign.start,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   @override
@@ -279,6 +284,8 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
                   controller: _controller,
                   focusNode: _focusNode,
                   autofocus: widget.autofocus,
+                  textAlign: widget.textAlign,
+                  textCapitalization: widget.textCapitalization,
                   style: textStyle,
                   decoration: InputDecoration(
                     isDense: true,

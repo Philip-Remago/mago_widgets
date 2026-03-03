@@ -18,6 +18,8 @@ class MagoPasswordInput extends MagoTextInput {
     super.height,
     super.width,
     super.onSubmittedPop,
+    super.textAlign,
+    super.textCapitalization,
     this.initiallyObscured = true,
   }) : super(
           maxLines: 1,
@@ -92,6 +94,8 @@ class _MagoPasswordInputBodyState extends State<_MagoPasswordInputBody> {
               maxLines: 1,
               keyboardType: TextInputType.visiblePassword,
               textInputAction: widget.input.textInputAction,
+              textAlign: widget.input.textAlign,
+              textCapitalization: widget.input.textCapitalization,
               style: textStyle,
               obscureText: _obscure,
               enableSuggestions: false,

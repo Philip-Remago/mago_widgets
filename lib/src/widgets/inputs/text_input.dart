@@ -20,6 +20,9 @@ class MagoTextInput extends StatelessWidget {
 
   final VoidCallback? onSubmittedPop;
 
+  final TextAlign textAlign;
+  final TextCapitalization textCapitalization;
+
   const MagoTextInput({
     super.key,
     required this.controller,
@@ -33,6 +36,8 @@ class MagoTextInput extends StatelessWidget {
     this.height,
     this.width,
     this.onSubmittedPop,
+    this.textAlign = TextAlign.start,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   @override
@@ -97,6 +102,8 @@ class _MagoTextInputBodyState extends State<_MagoTextInputBody> {
         maxLines: widget.input.maxLines,
         keyboardType: widget.input.keyboardType,
         textInputAction: widget.input.textInputAction,
+        textAlign: widget.input.textAlign,
+        textCapitalization: widget.input.textCapitalization,
         style: textStyle,
         expands: widget.input.height != null && widget.input.maxLines == 1
             ? false
