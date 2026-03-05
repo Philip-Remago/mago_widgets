@@ -109,6 +109,7 @@ class _MagoDrawerState extends State<MagoDrawer>
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.controller != widget.controller) {
+      oldWidget.controller?.removeListener(_onExternalControllerChanged);
       oldWidget.controller?.detach();
       _attachExternalController();
     }
@@ -126,6 +127,7 @@ class _MagoDrawerState extends State<MagoDrawer>
 
   @override
   void dispose() {
+    widget.controller?.removeListener(_onExternalControllerChanged);
     widget.controller?.detach();
     _controller.removeListener(_syncControllerValue);
     _controller.dispose();
@@ -136,7 +138,12 @@ class _MagoDrawerState extends State<MagoDrawer>
     widget.controller?.updateValue(_controller.value);
   }
 
+  void _onExternalControllerChanged() {
+    if (mounted) setState(() {});
+  }
+
   void _attachExternalController() {
+    widget.controller?.addListener(_onExternalControllerChanged);
     widget.controller?.attach(
       onOpen: () => _animateTo(1.0),
       onClose: () => _animateTo(0.0),
@@ -335,7 +342,9 @@ class _MagoDrawerState extends State<MagoDrawer>
                 : (_isVertical ? screen.height : screen.width);
 
             final handleSize = widget.showHandle ? widget.handleThickness : 0.0;
-            final minPx = math.max(widget.minExtent * mainSize, handleSize);
+            final minPx = widget.minExtent <= 0
+                ? 0.0
+                : math.max(widget.minExtent * mainSize, handleSize);
             final maxPx = math.max(widget.maxExtent * mainSize, minPx + 1);
 
             _minPx = minPx;
@@ -355,6 +364,11 @@ class _MagoDrawerState extends State<MagoDrawer>
                 final extentPx = _lerp(_minPx, _maxPx, _controller.value)
                     .clamp(_minPx, _maxPx);
                 final factor = _maxPx <= 0 ? 0.0 : (extentPx / _maxPx);
+
+                final isHidden = widget.controller?.isHidden ?? false;
+                if ((_minPx <= 0 || isHidden) && _controller.value < 0.001) {
+                  return const SizedBox.shrink();
+                }
 
                 final panel = SizedBox(
                   width: _isVertical ? boundedMaxW : _maxPx,

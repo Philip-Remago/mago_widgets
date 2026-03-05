@@ -2,12 +2,15 @@ import 'package:flutter/foundation.dart';
 
 class MagoDrawerController extends ChangeNotifier {
   double _value = 0.0;
+  bool _hidden = false;
 
   double get value => _value;
 
   bool get isOpen => _value >= 1.0;
 
   bool get isClosed => _value <= 0.0;
+
+  bool get isHidden => _hidden;
 
   VoidCallback? _onOpen;
   VoidCallback? _onClose;
@@ -28,6 +31,22 @@ class MagoDrawerController extends ChangeNotifier {
 
   void animateTo(double target) {
     _onAnimateTo?.call(target);
+  }
+
+  void hide() {
+    if (!_hidden) {
+      _hidden = true;
+      notifyListeners();
+    }
+    _onClose?.call();
+  }
+
+  void show() {
+    if (_hidden) {
+      _hidden = false;
+      notifyListeners();
+    }
+    _onOpen?.call();
   }
 
   @internal
