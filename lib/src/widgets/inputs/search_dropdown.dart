@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 import '../components/glass_container.dart';
@@ -34,6 +35,7 @@ class MagoSearchDropdown<T> extends StatefulWidget {
 
   final TextAlign textAlign;
   final TextCapitalization textCapitalization;
+  final bool rootOverlay;
 
   const MagoSearchDropdown({
     super.key,
@@ -54,6 +56,7 @@ class MagoSearchDropdown<T> extends StatefulWidget {
     this.showClearButton = true,
     this.textAlign = TextAlign.start,
     this.textCapitalization = TextCapitalization.none,
+    this.rootOverlay = false,
   });
 
   @override
@@ -104,10 +107,13 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
   void _onFocusChanged() {
     if (_focusNode.hasFocus) {
       _applyFilter(_controller.text);
-      _showOverlay();
+      // Defer overlay insertion so it never fires during a parent build.
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _focusNode.hasFocus) _showOverlay();
+      });
     } else {
       Future.delayed(const Duration(milliseconds: 150), () {
-        if (!_focusNode.hasFocus) {
+        if (mounted && !_focusNode.hasFocus) {
           _controller.text =
               widget.value != null ? widget.itemLabel(widget.value as T) : '';
           _removeOverlay();
@@ -181,7 +187,7 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
       return;
     }
 
-    final overlay = Overlay.of(context);
+    final overlay = Overlay.of(context, rootOverlay: widget.rootOverlay);
     final renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
 
