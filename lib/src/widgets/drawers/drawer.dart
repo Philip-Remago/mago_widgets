@@ -118,8 +118,10 @@ class _MagoDrawerState extends State<MagoDrawer>
     final newMinF = widget.minExtent;
     final newMaxF = _safeMax(widget.maxExtent, newMinF);
 
-    final currentF = _lerp(oldMinF, oldMaxF, _controller.value);
-    _controller.value = _normalizeExtent(newMinF, newMaxF, currentF);
+    if (oldMinF != newMinF || oldMaxF != newMaxF) {
+      final currentF = _lerp(oldMinF, oldMaxF, _controller.value);
+      _controller.value = _normalizeExtent(newMinF, newMaxF, currentF);
+    }
   }
 
   @override
