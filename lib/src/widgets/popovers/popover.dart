@@ -73,6 +73,7 @@ class MagoPopoverAnchor extends StatefulWidget {
     this.showArrow = true,
     this.arrowSize = 6,
     this.arrowBaseWidth = 22,
+    this.tapToToggle = true,
     this.onShown,
     this.onDismissed,
   });
@@ -102,15 +103,16 @@ class MagoPopoverAnchor extends StatefulWidget {
   final bool showArrow;
   final double arrowSize;
   final double arrowBaseWidth;
+  final bool tapToToggle;
 
   final VoidCallback? onShown;
   final VoidCallback? onDismissed;
 
   @override
-  State<MagoPopoverAnchor> createState() => _MagoPopoverAnchorState();
+  State<MagoPopoverAnchor> createState() => MagoPopoverAnchorState();
 }
 
-class _MagoPopoverAnchorState extends State<MagoPopoverAnchor>
+class MagoPopoverAnchorState extends State<MagoPopoverAnchor>
     with SingleTickerProviderStateMixin {
   OverlayEntry? _entry;
   bool _barrierEnabled = true;
@@ -352,6 +354,7 @@ class _MagoPopoverAnchorState extends State<MagoPopoverAnchor>
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.tapToToggle) return widget.child;
     return GestureDetector(
       onTap: toggle,
       behavior: HitTestBehavior.opaque,
