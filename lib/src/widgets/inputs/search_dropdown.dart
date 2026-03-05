@@ -64,94 +64,61 @@ class MagoSearchDropdown<T> extends StatefulWidget {
 }
 
 class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
-  late final TextEditingController _controller;
-  late final FocusNode _focusNode;
-  final LayerLink _layerLink = LayerLink();
+  late final TextEditingController _searchController;
+  late final FocusNode _keyListenerFocusNode;
+  final _tapRegionGroupId = Object();
   OverlayEntry? _overlayEntry;
 
   List<T> _filtered = [];
   bool _isOpen = false;
   int _highlightIndex = -1;
+
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(
-      text: widget.value != null ? widget.itemLabel(widget.value as T) : '',
-    );
-    _focusNode = FocusNode();
-    _focusNode.addListener(_onFocusChanged);
+    _searchController = TextEditingController();
+    _keyListenerFocusNode = FocusNode(skipTraversal: true);
     _filtered = List.of(widget.items);
   }
 
   @override
   void didUpdateWidget(covariant MagoSearchDropdown<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.value != oldWidget.value) {
-      _controller.text =
-          widget.value != null ? widget.itemLabel(widget.value as T) : '';
-    }
     if (widget.items != oldWidget.items) {
-      _applyFilter(_controller.text);
+      _filtered = List.of(widget.items);
+      _overlayEntry?.markNeedsBuild();
     }
   }
 
   @override
   void dispose() {
     _removeOverlay();
-    _focusNode.removeListener(_onFocusChanged);
-    _focusNode.dispose();
-    _controller.dispose();
+    _keyListenerFocusNode.dispose();
+    _searchController.dispose();
     super.dispose();
-  }
-
-  void _onFocusChanged() {
-    if (_focusNode.hasFocus) {
-      _applyFilter(_controller.text);
-      // Defer overlay insertion so it never fires during a parent build.
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        if (mounted && _focusNode.hasFocus) _showOverlay();
-      });
-    } else {
-      Future.delayed(const Duration(milliseconds: 150), () {
-        if (mounted && !_focusNode.hasFocus) {
-          _controller.text =
-              widget.value != null ? widget.itemLabel(widget.value as T) : '';
-          _removeOverlay();
-        }
-      });
-    }
   }
 
   void _applyFilter(String query) {
     final q = query.toLowerCase().trim();
-    setState(() {
-      if (q.isEmpty) {
-        _filtered = List.of(widget.items);
-      } else {
-        _filtered = widget.items
-            .where((item) => widget.itemLabel(item).toLowerCase().contains(q))
-            .toList();
-      }
-      _highlightIndex = _filtered.isNotEmpty ? 0 : -1;
-    });
+    if (q.isEmpty) {
+      _filtered = List.of(widget.items);
+    } else {
+      _filtered = widget.items
+          .where((item) => widget.itemLabel(item).toLowerCase().contains(q))
+          .toList();
+    }
+    _highlightIndex = _filtered.isNotEmpty ? 0 : -1;
     _overlayEntry?.markNeedsBuild();
   }
 
   void _selectItem(T item) {
-    _controller.text = widget.itemLabel(item);
-    _controller.selection = TextSelection.collapsed(
-      offset: _controller.text.length,
-    );
     widget.onSelected?.call(item);
     _removeOverlay();
-    _focusNode.unfocus();
   }
 
   void _clearSelection() {
-    _controller.clear();
     widget.onCleared?.call();
-    _applyFilter('');
-    _focusNode.requestFocus();
+    _removeOverlay();
   }
 
   void _handleKey(KeyEvent event) {
@@ -160,15 +127,11 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
 
     final key = event.logicalKey;
     if (key == LogicalKeyboardKey.arrowDown) {
-      setState(() {
-        _highlightIndex = (_highlightIndex + 1) % _filtered.length;
-      });
+      _highlightIndex = (_highlightIndex + 1) % _filtered.length;
       _overlayEntry?.markNeedsBuild();
     } else if (key == LogicalKeyboardKey.arrowUp) {
-      setState(() {
-        _highlightIndex =
-            (_highlightIndex - 1 + _filtered.length) % _filtered.length;
-      });
+      _highlightIndex =
+          (_highlightIndex - 1 + _filtered.length) % _filtered.length;
       _overlayEntry?.markNeedsBuild();
     } else if (key == LogicalKeyboardKey.enter ||
         key == LogicalKeyboardKey.numpadEnter) {
@@ -177,7 +140,16 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
       }
     } else if (key == LogicalKeyboardKey.escape) {
       _removeOverlay();
-      _focusNode.unfocus();
+    }
+  }
+
+  void _toggle() {
+    if (_isOpen) {
+      _removeOverlay();
+    } else {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _showOverlay();
+      });
     }
   }
 
@@ -187,54 +159,120 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
       return;
     }
 
+    final renderBox = context.findRenderObject() as RenderBox?;
+    if (renderBox == null || !renderBox.hasSize) return;
+
     final overlay = Overlay.of(context, rootOverlay: widget.rootOverlay);
-    final renderBox = context.findRenderObject() as RenderBox;
+    final overlayBox = overlay.context.findRenderObject() as RenderBox?;
+    if (overlayBox == null) return;
+
     final size = renderBox.size;
+    final topLeft = renderBox.localToGlobal(Offset.zero, ancestor: overlayBox);
+
+    _searchController.clear();
+    _filtered = List.of(widget.items);
+    _highlightIndex = _filtered.isNotEmpty ? 0 : -1;
 
     _overlayEntry = OverlayEntry(
       builder: (ctx) {
         final theme = Theme.of(ctx);
+        final hintStyle = theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.onSurface.withAlpha(128),
+        );
+        final inputStyle = theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.onSurface,
+        );
+
         return Positioned(
+          left: topLeft.dx,
+          top: topLeft.dy + size.height + 4,
           width: size.width,
-          child: CompositedTransformFollower(
-            link: _layerLink,
-            showWhenUnlinked: false,
-            offset: Offset(0, size.height + 4),
-            child: Material(
-              elevation: 4,
+          child: TapRegion(
+            groupId: _tapRegionGroupId,
+            onTapOutside: (_) => _removeOverlay(),
+            child: GlassContainer(
               borderRadius: widget.borderRadius,
-              color: theme.colorScheme.surfaceContainer,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: widget.maxDropdownHeight,
-                ),
-                child: _filtered.isEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(
-                          'No results',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withAlpha(128),
+              padding: EdgeInsets.zero,
+              child: Material(
+                color: Colors.transparent,
+                type: MaterialType.transparency,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+                      child: TextField(
+                        controller: _searchController,
+                        autofocus: false,
+                        textAlign: widget.textAlign,
+                        textCapitalization: widget.textCapitalization,
+                        style: inputStyle,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 10,
                           ),
+                          prefixIcon: const Icon(Icons.search, size: 18),
+                          prefixIconConstraints: const BoxConstraints(
+                            minWidth: 36,
+                            minHeight: 0,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: widget.borderRadius,
+                            borderSide: BorderSide(
+                              color: theme.colorScheme.onSurface.withAlpha(60),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: widget.borderRadius,
+                            borderSide: BorderSide(
+                              color: theme.colorScheme.onSurface.withAlpha(60),
+                            ),
+                          ),
+                          hintText: widget.placeholder ?? 'Search…',
+                          hintStyle: hintStyle,
+                          filled: true,
+                          fillColor: Colors.transparent,
                         ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        shrinkWrap: true,
-                        itemCount: _filtered.length,
-                        itemBuilder: (_, i) {
-                          final item = _filtered[i];
-                          final highlighted = i == _highlightIndex;
-                          return _DropdownItem<T>(
-                            item: item,
-                            label: widget.itemLabel(item),
-                            subtitle: widget.itemSubtitle?.call(item),
-                            leading: widget.itemLeading?.call(item),
-                            highlighted: highlighted,
-                            onTap: () => _selectItem(item),
-                          );
-                        },
+                        onChanged: _applyFilter,
                       ),
+                    ),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: widget.maxDropdownHeight,
+                      ),
+                      child: _filtered.isEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(
+                                'No results',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: theme.colorScheme.onSurface
+                                      .withAlpha(128),
+                                ),
+                              ),
+                            )
+                          : ListView.builder(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              shrinkWrap: true,
+                              itemCount: _filtered.length,
+                              itemBuilder: (_, i) {
+                                final item = _filtered[i];
+                                final highlighted = i == _highlightIndex;
+                                return _DropdownItem<T>(
+                                  item: item,
+                                  label: widget.itemLabel(item),
+                                  subtitle: widget.itemSubtitle?.call(item),
+                                  leading: widget.itemLeading?.call(item),
+                                  highlighted: highlighted,
+                                  onTap: () => _selectItem(item),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -242,13 +280,25 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
       },
     );
     overlay.insert(_overlayEntry!);
-    _isOpen = true;
+    setState(() {
+      _isOpen = true;
+    });
   }
 
   void _removeOverlay() {
-    _overlayEntry?.remove();
+    final entry = _overlayEntry;
+    if (entry == null) return;
     _overlayEntry = null;
+    entry.remove();
     _isOpen = false;
+    if (mounted) setState(() {});
+  }
+
+  String get _displayText {
+    if (widget.value != null) {
+      return widget.itemLabel(widget.value as T);
+    }
+    return '';
   }
 
   @override
@@ -264,64 +314,54 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
       color: theme.colorScheme.onSurface.withAlpha(128),
     );
 
-    final hasSelection = _controller.text.isNotEmpty;
+    final displayText = _displayText;
+    final hasSelection = displayText.isNotEmpty;
 
-    return CompositedTransformTarget(
-      link: _layerLink,
+    return TapRegion(
+      groupId: _tapRegionGroupId,
       child: KeyboardListener(
-        focusNode: FocusNode(skipTraversal: true),
+        focusNode: _keyListenerFocusNode,
         onKeyEvent: _handleKey,
-        child: GlassContainer(
-          height: widget.height,
-          width: widget.width,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-          borderRadius: widget.borderRadius,
-          backgroundColor: fillColor,
-          child: Row(
-            children: [
-              Icon(
-                Icons.search,
-                size: 20,
-                color: theme.colorScheme.onSurface.withAlpha(160),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  focusNode: _focusNode,
-                  autofocus: widget.autofocus,
-                  textAlign: widget.textAlign,
-                  textCapitalization: widget.textCapitalization,
-                  style: textStyle,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    hintText: widget.placeholder,
-                    hintStyle: hintStyle,
-                  ),
-                  onChanged: _applyFilter,
-                ),
-              ),
-              if (widget.showClearButton && hasSelection)
-                GestureDetector(
-                  onTap: _clearSelection,
-                  child: Icon(
-                    Icons.close,
-                    size: 18,
-                    color: theme.colorScheme.onSurface.withAlpha(160),
-                  ),
-                )
-              else
+        child: GestureDetector(
+          onTap: _toggle,
+          child: GlassContainer(
+            height: widget.height,
+            width: widget.width,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            borderRadius: widget.borderRadius,
+            backgroundColor: fillColor,
+            child: Row(
+              children: [
                 Icon(
-                  Icons.arrow_drop_down,
-                  size: 22,
+                  Icons.search,
+                  size: 20,
                   color: theme.colorScheme.onSurface.withAlpha(160),
                 ),
-            ],
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    hasSelection ? displayText : (widget.placeholder ?? ''),
+                    style: hasSelection ? textStyle : hintStyle,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (widget.showClearButton && hasSelection)
+                  GestureDetector(
+                    onTap: _clearSelection,
+                    child: Icon(
+                      Icons.close,
+                      size: 18,
+                      color: theme.colorScheme.onSurface.withAlpha(160),
+                    ),
+                  )
+                else
+                  Icon(
+                    _isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                    size: 22,
+                    color: theme.colorScheme.onSurface.withAlpha(160),
+                  ),
+              ],
+            ),
           ),
         ),
       ),
