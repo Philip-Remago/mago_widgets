@@ -2,12 +2,14 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:mago_widgets/src/widgets/components/glass_container.dart';
+import 'package:mago_widgets/src/widgets/drawers/drawer_controller.dart';
 
 enum MagoDrawerPlacement { top, bottom, left, right }
 
 class MagoDrawer extends StatefulWidget {
   const MagoDrawer({
     super.key,
+    this.controller,
     this.placement = MagoDrawerPlacement.bottom,
     required this.minExtent,
     required this.maxExtent,
@@ -26,6 +28,8 @@ class MagoDrawer extends StatefulWidget {
   })  : assert(minExtent >= 0 && minExtent <= 1),
         assert(maxExtent >= 0 && maxExtent <= 1),
         assert(maxExtent >= minExtent);
+
+  final MagoDrawerController? controller;
 
   final MagoDrawerPlacement placement;
 
@@ -95,11 +99,19 @@ class _MagoDrawerState extends State<MagoDrawer>
       upperBound: 1,
       value: _normalizeExtent(minF, maxF, initialF),
     );
+
+    _controller.addListener(_syncControllerValue);
+    _attachExternalController();
   }
 
   @override
   void didUpdateWidget(covariant MagoDrawer oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller?.detach();
+      _attachExternalController();
+    }
 
     final oldMinF = oldWidget.minExtent;
     final oldMaxF = _safeMax(oldWidget.maxExtent, oldMinF);
@@ -112,8 +124,24 @@ class _MagoDrawerState extends State<MagoDrawer>
 
   @override
   void dispose() {
+    widget.controller?.detach();
+    _controller.removeListener(_syncControllerValue);
     _controller.dispose();
     super.dispose();
+  }
+
+  void _syncControllerValue() {
+    widget.controller?.updateValue(_controller.value);
+  }
+
+  void _attachExternalController() {
+    widget.controller?.attach(
+      onOpen: () => _animateTo(1.0),
+      onClose: () => _animateTo(0.0),
+      onToggle: _toggle,
+      onAnimateTo: _animateTo,
+    );
+    widget.controller?.updateValue(_controller.value);
   }
 
   Alignment get _alignment {

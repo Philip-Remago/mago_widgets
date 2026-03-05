@@ -27,6 +27,7 @@ export 'src/widgets/components/glass_container.dart';
 export 'src/widgets/components/grid.dart';
 export 'src/widgets/components/object_loader.dart';
 export 'src/widgets/components/qr.dart';
+export 'src/widgets/components/spinning_loader.dart';
 export 'src/widgets/components/toast.dart';
 
 export 'src/widgets/conference/conference.dart';
@@ -42,6 +43,7 @@ export 'src/widgets/draggables/drag_surface.dart';
 export 'src/widgets/draggables/object_actions.dart';
 
 export 'src/widgets/drawers/drawer.dart';
+export 'src/widgets/drawers/drawer_controller.dart';
 
 export 'src/widgets/inputs/email_chip_input.dart';
 export 'src/widgets/inputs/image_file_input.dart';
