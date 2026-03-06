@@ -12,6 +12,7 @@ class GlassProperties {
     this.backgroundColor,
     this.borderColor,
     this.clipBehavior = Clip.antiAlias,
+    this.boxShadow,
   });
 
   final double blurSigma;
@@ -27,6 +28,8 @@ class GlassProperties {
   final Color? borderColor;
 
   final Clip clipBehavior;
+
+  final List<BoxShadow>? boxShadow;
   GlassProperties copyWith({
     double? blurSigma,
     double? backgroundOpacity,
@@ -35,6 +38,7 @@ class GlassProperties {
     Color? backgroundColor,
     Color? borderColor,
     Clip? clipBehavior,
+    List<BoxShadow>? boxShadow,
   }) {
     return GlassProperties(
       blurSigma: blurSigma ?? this.blurSigma,
@@ -44,6 +48,7 @@ class GlassProperties {
       backgroundColor: backgroundColor ?? this.backgroundColor,
       borderColor: borderColor ?? this.borderColor,
       clipBehavior: clipBehavior ?? this.clipBehavior,
+      boxShadow: boxShadow ?? this.boxShadow,
     );
   }
 }

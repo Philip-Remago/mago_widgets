@@ -23,6 +23,7 @@ class MagoIconButton extends stage_button.MagoButton {
     super.minWidth = 44,
     super.maxHeight = 44,
     super.maxWidth = 44,
+    super.boxShadow,
     double iconSize = 20,
     EdgeInsets padding = const EdgeInsets.all(10),
     MagoIconButtonShape shape = MagoIconButtonShape.circle,

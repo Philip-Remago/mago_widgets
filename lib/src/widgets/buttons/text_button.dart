@@ -21,6 +21,7 @@ class MagoTextButton extends stageButton.MagoButton {
     super.maxHeight,
     super.maxWidth,
     super.expand = false,
+    super.boxShadow,
     this.textAlign = TextAlign.center,
     this.maxLines = 1,
     this.overflow = TextOverflow.ellipsis,

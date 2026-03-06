@@ -23,6 +23,7 @@ abstract class MagoButton extends StatefulWidget {
     this.maxHeight,
     this.maxWidth,
     this.expand = false,
+    this.boxShadow,
   });
 
   final VoidCallback? onPressed;
@@ -46,6 +47,9 @@ abstract class MagoButton extends StatefulWidget {
   final double? maxWidth;
 
   final bool expand;
+
+  /// Optional box shadow. Pass `[]` to disable the default shadow.
+  final List<BoxShadow>? boxShadow;
 
   bool get isEnabled => enabled && onPressed != null;
 
@@ -76,6 +80,7 @@ class _MagoButtonState extends State<MagoButton> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final resolved = stageButtonStyle.MagoButtonStyle.resolve(
       context,
       enabled: widget.isEnabled,
@@ -120,6 +125,14 @@ class _MagoButtonState extends State<MagoButton> {
       glassProperties: GlassProperties(
         backgroundColor: bg,
         backgroundOpacity: bgOpacity,
+        boxShadow: widget.boxShadow ??
+            [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
       ),
       child: Material(
         color: Colors.transparent,

@@ -53,7 +53,7 @@ class GlassContainer extends StatelessWidget {
     );
 
     if (glassProperties.blurSigma > 0) {
-      return ClipRRect(
+      content = ClipRRect(
         borderRadius: borderRadius,
         clipBehavior: glassProperties.clipBehavior,
         child: BackdropFilter(
@@ -64,13 +64,26 @@ class GlassContainer extends StatelessWidget {
           child: content,
         ),
       );
+    } else {
+      content = ClipRRect(
+        borderRadius: borderRadius,
+        clipBehavior: glassProperties.clipBehavior,
+        child: content,
+      );
     }
 
-    return ClipRRect(
-      borderRadius: borderRadius,
-      clipBehavior: glassProperties.clipBehavior,
-      child: content,
-    );
+    if (glassProperties.boxShadow != null &&
+        glassProperties.boxShadow!.isNotEmpty) {
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: borderRadius,
+          boxShadow: glassProperties.boxShadow!,
+        ),
+        child: content,
+      );
+    }
+
+    return content;
   }
 }
 

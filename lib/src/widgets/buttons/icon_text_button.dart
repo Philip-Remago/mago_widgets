@@ -24,6 +24,7 @@ class MagoIconTextButton extends stageButton.MagoButton {
     super.maxHeight,
     super.maxWidth,
     super.expand = false,
+    super.boxShadow,
     this.iconSize = 20,
     this.iconPlacement = MagoIconPlacement.start,
     this.mainAxisAlignment = MainAxisAlignment.center,

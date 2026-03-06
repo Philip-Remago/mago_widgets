@@ -290,7 +290,7 @@ ThemeData lightMode = ThemeData(
     onError: Colors.white,
     errorContainer: MagoColors.errorLight.withAlpha(51),
     onErrorContainer: MagoColors.errorDark,
-    surface: const Color(0xFFFFFBFE),
+    surface: MagoColors.neutral50,
     onSurface: const Color(0xFF1C1B1F),
     surfaceContainerHighest: const Color(0xFFE7E0EC),
     surfaceContainerHigh: const Color(0xFFECE6F0),

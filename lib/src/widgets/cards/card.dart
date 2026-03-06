@@ -46,7 +46,16 @@ class MagoCard extends StatelessWidget {
 
     return GlassContainer(
       borderRadius: borderRadius,
-      glassProperties: glassProperties ?? const GlassProperties(),
+      glassProperties: (glassProperties ?? const GlassProperties()).copyWith(
+        boxShadow: glassProperties?.boxShadow ??
+            [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+      ),
       child: InkWell(
         onTap: onTap,
         onLongPress: onLongPress,
