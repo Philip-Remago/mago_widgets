@@ -18,8 +18,8 @@ class MagoObjectLoader extends StatefulWidget {
 
   const MagoObjectLoader({
     super.key,
-    this.lightAsset = 'assets/images/logo/pinecone.light.svg',
-    this.darkAsset = 'assets/images/logo/pinecone.dark.svg',
+    this.lightAsset = 'assets/images/defaults/logo/pinecone.light.svg',
+    this.darkAsset = 'assets/images/defaults/logo/pinecone.dark.svg',
     this.logoSize = 64,
     this.backgroundColor,
     this.minOpacity = 0.3,

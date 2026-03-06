@@ -62,13 +62,13 @@ class MagoFilePreview extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         Image.asset(
-          'assets/images/defaults/file.png',
+          'assets/images/defaults/icons/file.png',
           fit: BoxFit.contain,
         ),
         const MagoObjectLoader(
           backgroundColor: Colors.transparent,
           logoSize: 40,
-          darkAsset: 'assets/images/logo/pinecone.light.svg',
+          darkAsset: 'assets/images/defaults/logo/pinecone.light.svg',
         ),
       ],
     );
@@ -107,7 +107,7 @@ class MagoFilePreview extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         Image.asset(
-          'assets/images/defaults/file.png',
+          'assets/images/defaults/icons/file.png',
           fit: BoxFit.contain,
         ),
         if (typeLabel.isNotEmpty)

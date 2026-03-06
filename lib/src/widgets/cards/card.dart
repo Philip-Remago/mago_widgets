@@ -96,8 +96,8 @@ class _PineconeFallback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final asset = isDark
-        ? 'assets/images/logo/pinecone.dark.svg'
-        : 'assets/images/logo/pinecone.light.svg';
+        ? 'assets/images/defaults/logo/pinecone.dark.svg'
+        : 'assets/images/defaults/logo/pinecone.light.svg';
 
     return ColoredBox(
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
