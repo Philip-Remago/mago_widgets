@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mago_widgets/src/helpers/border_radius_calculator.dart';
+import 'package:mago_widgets/src/helpers/constants.dart';
 import 'package:mago_widgets/src/widgets/components/glass_container.dart';
 import 'package:mago_widgets/src/widgets/components/object_loader.dart';
 
@@ -14,6 +15,7 @@ class MagoCard extends StatelessWidget {
     this.imageUrl,
     this.child,
     this.borderRadius = const BorderRadius.all(Radius.circular(8)),
+    this.glassProperties,
   });
 
   final String title;
@@ -25,6 +27,8 @@ class MagoCard extends StatelessWidget {
 
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
+
+  final GlassProperties? glassProperties;
 
   static const double _inset = 4.0;
 
@@ -42,6 +46,7 @@ class MagoCard extends StatelessWidget {
 
     return GlassContainer(
       borderRadius: borderRadius,
+      glassProperties: glassProperties ?? const GlassProperties(),
       child: InkWell(
         onTap: onTap,
         onLongPress: onLongPress,

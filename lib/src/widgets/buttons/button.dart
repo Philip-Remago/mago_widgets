@@ -1,6 +1,7 @@
 // ignore_for_file: library_prefixes
 
 import 'package:flutter/material.dart';
+import 'package:mago_widgets/src/helpers/constants.dart';
 import 'package:mago_widgets/src/widgets/buttons/button_style.dart'
     as stageButtonStyle;
 import 'package:mago_widgets/src/widgets/components/glass_container.dart';
@@ -116,8 +117,10 @@ class _MagoButtonState extends State<MagoButton> {
 
     final button = GlassContainer(
       borderRadius: widget.borderRadius,
-      backgroundColor: bg,
-      backgroundOpacity: bgOpacity,
+      glassProperties: GlassProperties(
+        backgroundColor: bg,
+        backgroundOpacity: bgOpacity,
+      ),
       child: Material(
         color: Colors.transparent,
         shape: RoundedRectangleBorder(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../helpers/constants.dart';
 import '../components/glass_container.dart';
 import 'text_input.dart';
 
@@ -83,7 +84,7 @@ class _MagoPasswordInputBodyState extends State<_MagoPasswordInputBody> {
       width: widget.input.width,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       borderRadius: widget.input.borderRadius,
-      backgroundColor: fillColor,
+      glassProperties: GlassProperties(backgroundColor: fillColor),
       child: Row(
         children: [
           Expanded(

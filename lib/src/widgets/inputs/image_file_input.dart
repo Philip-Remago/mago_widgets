@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
+import '../../helpers/constants.dart';
 import '../components/glass_container.dart';
 
 class MagoImageFileInput extends StatefulWidget {
@@ -93,7 +94,7 @@ class _MagoImageFileInputState extends State<MagoImageFileInput> {
 
     return GlassContainer(
       borderRadius: widget.borderRadius,
-      backgroundColor: resolvedFill,
+      glassProperties: GlassProperties(backgroundColor: resolvedFill),
       child: Material(
         color: Colors.transparent,
         clipBehavior: Clip.antiAlias,

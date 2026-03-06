@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../helpers/constants.dart';
 import '../components/glass_container.dart';
 
 class MagoEmailChipInput extends StatefulWidget {
@@ -157,7 +158,7 @@ class _MagoEmailChipInputState extends State<MagoEmailChipInput> {
         width: widget.width ?? double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         borderRadius: widget.borderRadius,
-        backgroundColor: fillColor,
+        glassProperties: GlassProperties(backgroundColor: fillColor),
         child: Wrap(
           spacing: 4,
           runSpacing: 4,

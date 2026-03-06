@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:mago_widgets/src/helpers/constants.dart';
 
 class GlassContainer extends StatelessWidget {
   const GlassContainer({
@@ -10,13 +11,7 @@ class GlassContainer extends StatelessWidget {
     this.height,
     this.borderRadius = const BorderRadius.all(Radius.circular(20)),
     this.padding,
-    this.blurSigma = 10,
-    this.backgroundOpacity = 0.2,
-    this.borderOpacity = 0.3,
-    this.borderWidth = 0.5,
-    this.backgroundColor,
-    this.borderColor,
-    this.clipBehavior = Clip.antiAlias,
+    this.glassProperties = const GlassProperties(),
   });
 
   final Widget? child;
@@ -29,84 +24,28 @@ class GlassContainer extends StatelessWidget {
 
   final EdgeInsetsGeometry? padding;
 
-  final double blurSigma;
-
-  final double backgroundOpacity;
-
-  final double borderOpacity;
-
-  final double borderWidth;
-
-  final Color? backgroundColor;
-
-  final Color? borderColor;
-
-  final Clip clipBehavior;
+  final GlassProperties glassProperties;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final bgBase = backgroundColor ??
+    final bgBase = glassProperties.backgroundColor ??
         (isDark
             ? theme.colorScheme.surfaceContainer
             : theme.colorScheme.surface);
-    final brdBase = borderColor ?? theme.colorScheme.onSurface;
 
-    final resolvedBg = bgBase.withValues(alpha: backgroundOpacity);
+    final resolvedBg =
+        bgBase.withValues(alpha: glassProperties.backgroundOpacity);
 
-    final lightEdge =
-        brdBase.withValues(alpha: (borderOpacity * 1.8).clamp(0.0, 1.0));
-    final darkEdge =
-        brdBase.withValues(alpha: (borderOpacity * 0.2).clamp(0.0, 1.0));
-    final midEdge = brdBase.withValues(alpha: borderOpacity);
-
-    // SweepGradient keeps light/dark at corners regardless of aspect ratio.
-    // Sweep starts at 3-o'clock and goes clockwise:
-    //   0.0  → right        (mid)
-    //   0.125 → bottom-right (light)
-    //   0.25  → bottom       (mid)
-    //   0.375 → bottom-left  (dark)
-    //   0.5   → left         (mid)
-    //   0.625 → top-left     (light)
-    //   0.75  → top          (mid)
-    //   0.875 → top-right    (dark)
-    //   1.0   → right        (mid)
     Widget content = Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
         color: resolvedBg,
         borderRadius: borderRadius,
-        border: GradientBoxBorder(
-          width: borderWidth,
-          gradient: SweepGradient(
-            center: Alignment.center,
-            colors: [
-              midEdge,
-              lightEdge,
-              midEdge,
-              darkEdge,
-              midEdge,
-              lightEdge,
-              midEdge,
-              darkEdge,
-              midEdge,
-            ],
-            stops: const [
-              0.0,
-              0.125,
-              0.25,
-              0.375,
-              0.5,
-              0.625,
-              0.75,
-              0.875,
-              1.0,
-            ],
-          ),
-        ),
+        border: glassBorder(context, properties: glassProperties),
       ),
       child: child != null
           ? (padding != null ? Padding(padding: padding!, child: child) : child)
@@ -115,9 +54,12 @@ class GlassContainer extends StatelessWidget {
 
     return ClipRRect(
       borderRadius: borderRadius,
-      clipBehavior: clipBehavior,
+      clipBehavior: glassProperties.clipBehavior,
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
+        filter: ImageFilter.blur(
+          sigmaX: glassProperties.blurSigma,
+          sigmaY: glassProperties.blurSigma,
+        ),
         child: content,
       ),
     );

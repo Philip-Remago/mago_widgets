@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../helpers/constants.dart';
 import '../components/glass_container.dart';
 
 class MagoTextInput extends StatelessWidget {
@@ -94,7 +95,7 @@ class _MagoTextInputBodyState extends State<_MagoTextInputBody> {
       width: widget.input.width,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       borderRadius: widget.input.borderRadius,
-      backgroundColor: fillColor,
+      glassProperties: GlassProperties(backgroundColor: fillColor),
       child: TextField(
         controller: widget.input.controller,
         focusNode: _focusNode,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mago_widgets/src/helpers/constants.dart';
 import 'package:mago_widgets/src/widgets/components/glass_container.dart';
 
 class MagoPopupDialog extends StatelessWidget {
@@ -89,7 +90,7 @@ class MagoPopupDialog extends StatelessWidget {
         ),
         child: GlassContainer(
           borderRadius: BorderRadius.all(borderRadius),
-          backgroundColor: backgroundColor,
+          glassProperties: GlassProperties(backgroundColor: backgroundColor),
           child: ConstrainedBox(
             constraints: BoxConstraints.tightFor(width: width),
             child: child,

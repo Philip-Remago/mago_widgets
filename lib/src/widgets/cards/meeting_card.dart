@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mago_widgets/src/helpers/constants.dart';
 import 'package:mago_widgets/src/widgets/buttons/text_button.dart';
 import 'package:mago_widgets/src/widgets/buttons/button_style.dart';
 import 'package:mago_widgets/src/widgets/components/glass_container.dart';
@@ -14,7 +15,7 @@ class MagoMeetingCard extends StatelessWidget {
     this.onButtonPressed,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.padding = const EdgeInsets.all(16),
-    this.backgroundColor,
+    this.glassProperties,
     this.iconColor,
   });
 
@@ -32,7 +33,7 @@ class MagoMeetingCard extends StatelessWidget {
 
   final BorderRadius borderRadius;
   final EdgeInsets padding;
-  final Color? backgroundColor;
+  final GlassProperties? glassProperties;
   final Color? iconColor;
 
   @override
@@ -44,7 +45,7 @@ class MagoMeetingCard extends StatelessWidget {
 
     return GlassContainer(
       borderRadius: borderRadius,
-      backgroundColor: backgroundColor,
+      glassProperties: glassProperties ?? const GlassProperties(),
       padding: padding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
+import '../../helpers/constants.dart';
 import '../components/glass_container.dart';
 
 class MagoSearchDropdown<T> extends StatefulWidget {
@@ -329,7 +330,7 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
             width: widget.width,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             borderRadius: widget.borderRadius,
-            backgroundColor: fillColor,
+            glassProperties: GlassProperties(backgroundColor: fillColor),
             child: Row(
               children: [
                 Icon(

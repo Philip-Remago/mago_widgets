@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:mago_widgets/src/helpers/constants.dart';
 import 'package:mago_widgets/src/widgets/components/glass_container.dart';
 import 'package:mago_widgets/src/widgets/drawers/drawer_controller.dart';
 
@@ -375,7 +376,8 @@ class _MagoDrawerState extends State<MagoDrawer>
                   height: _isVertical ? _maxPx : boundedMaxH,
                   child: GlassContainer(
                     borderRadius: radius,
-                    backgroundColor: resolvedBgColor,
+                    glassProperties:
+                        GlassProperties(backgroundColor: resolvedBgColor),
                     child: body,
                   ),
                 );
