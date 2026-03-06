@@ -101,7 +101,7 @@ class MagoFilePreview extends StatelessWidget {
 
   Widget _buildNoPreview(BuildContext context) {
     final theme = Theme.of(context);
-    final typeLabel = fileType.toUpperCase();
+    final typeLabel = fileType;
 
     return Stack(
       fit: StackFit.expand,
@@ -125,7 +125,7 @@ class MagoFilePreview extends StatelessWidget {
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.3,
-                      color: MagoColors.neutral700,
+                      color: MagoColors.neutral500,
                     ),
                   ),
                 if (typeLabel.isNotEmpty && fileName.isNotEmpty)
@@ -136,7 +136,7 @@ class MagoFilePreview extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodySmall
-                        ?.copyWith(color: MagoColors.neutral700),
+                        ?.copyWith(color: MagoColors.neutral500),
                   ),
               ],
             ),
