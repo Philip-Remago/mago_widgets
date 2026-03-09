@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mago_widgets/src/widgets/buttons/button.dart' as stageButton;
 import 'package:mago_widgets/src/widgets/buttons/button_style.dart'
     as stageButtonStyle;
@@ -33,7 +34,7 @@ class MagoIconTextButton extends stageButton.MagoButton {
     this.overflow = TextOverflow.ellipsis,
   });
 
-  final IconData icon;
+  final Object icon;
   final String text;
 
   final double iconSize;
@@ -49,7 +50,20 @@ class MagoIconTextButton extends stageButton.MagoButton {
 
   @override
   Widget buildContent(BuildContext context) {
-    final iconWidget = Icon(icon, size: iconSize);
+    final Widget iconWidget;
+    if (icon is String) {
+      iconWidget = SvgPicture.asset(
+        icon as String,
+        width: iconSize,
+        height: iconSize,
+        colorFilter: ColorFilter.mode(
+          IconTheme.of(context).color ?? Colors.white,
+          BlendMode.srcIn,
+        ),
+      );
+    } else {
+      iconWidget = Icon(icon as IconData, size: iconSize);
+    }
 
     final textWidget = Text(
       text,
