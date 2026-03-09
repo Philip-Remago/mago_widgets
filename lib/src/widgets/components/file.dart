@@ -25,6 +25,8 @@ class MagoFilePreview extends StatelessWidget {
 
   final double size;
 
+  final double textSpacing;
+
   const MagoFilePreview({
     super.key,
     required this.state,
@@ -33,6 +35,7 @@ class MagoFilePreview extends StatelessWidget {
     this.previewImage,
     this.previewUrl,
     this.size = 130,
+    this.textSpacing = 55.0,
   });
 
   @override
@@ -149,7 +152,7 @@ class MagoFilePreview extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 55.0),
+                    SizedBox(height: textSpacing),
                     Expanded(
                       child: Align(
                         alignment: Alignment.topCenter,
