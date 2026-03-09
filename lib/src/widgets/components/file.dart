@@ -15,7 +15,7 @@ enum FilePreviewState {
 class MagoFilePreview extends StatelessWidget {
   final FilePreviewState state;
 
-  final String fileName;
+  final String? fileName;
 
   final String fileType;
 
@@ -27,15 +27,21 @@ class MagoFilePreview extends StatelessWidget {
 
   final double textSpacing;
 
+  final TextStyle? fileTypeStyle;
+
+  final TextStyle? fileNameStyle;
+
   const MagoFilePreview({
     super.key,
     required this.state,
-    this.fileName = '',
+    this.fileName,
     this.fileType = '',
     this.previewImage,
     this.previewUrl,
     this.size = 130,
     this.textSpacing = 55.0,
+    this.fileTypeStyle,
+    this.fileNameStyle,
   });
 
   @override
@@ -105,6 +111,17 @@ class MagoFilePreview extends StatelessWidget {
   Widget _buildNoPreview(BuildContext context) {
     final theme = Theme.of(context);
     final typeLabel = fileType;
+    final hasFileName = fileName != null && fileName!.isNotEmpty;
+
+    final resolvedTypeStyle = fileTypeStyle ??
+        theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
+          color: MagoColors.neutral500,
+        );
+
+    final resolvedNameStyle = fileNameStyle ??
+        theme.textTheme.bodySmall?.copyWith(color: MagoColors.neutral500);
 
     return Stack(
       fit: StackFit.expand,
@@ -121,16 +138,12 @@ class MagoFilePreview extends StatelessWidget {
                 child: Text(
                   typeLabel,
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                    color: MagoColors.neutral500,
-                  ),
+                  style: resolvedTypeStyle,
                 ),
               ),
             ),
           ),
-        if (typeLabel.isNotEmpty && fileName.isNotEmpty)
+        if (typeLabel.isNotEmpty && hasFileName)
           Positioned.fill(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -145,10 +158,7 @@ class MagoFilePreview extends StatelessWidget {
                         child: Text(
                           typeLabel,
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                          ),
+                          style: resolvedTypeStyle,
                         ),
                       ),
                     ),
@@ -159,12 +169,11 @@ class MagoFilePreview extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 28),
                           child: Text(
-                            fileName,
+                            fileName!,
                             maxLines: 2,
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodySmall
-                                ?.copyWith(color: MagoColors.neutral500),
+                            style: resolvedNameStyle,
                           ),
                         ),
                       ),
@@ -174,18 +183,17 @@ class MagoFilePreview extends StatelessWidget {
               },
             ),
           )
-        else if (fileName.isNotEmpty)
+        else if (hasFileName)
           Positioned.fill(
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 28),
                 child: Text(
-                  fileName,
+                  fileName!,
                   maxLines: 2,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall
-                      ?.copyWith(color: MagoColors.neutral500),
+                  style: resolvedNameStyle,
                 ),
               ),
             ),
