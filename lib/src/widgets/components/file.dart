@@ -31,6 +31,8 @@ class MagoFilePreview extends StatelessWidget {
 
   final TextStyle? fileNameStyle;
 
+  final double? textPadding;
+
   const MagoFilePreview({
     super.key,
     required this.state,
@@ -42,6 +44,7 @@ class MagoFilePreview extends StatelessWidget {
     this.textSpacing = 55.0,
     this.fileTypeStyle,
     this.fileNameStyle,
+    this.textPadding,
   });
 
   @override
@@ -123,7 +126,7 @@ class MagoFilePreview extends StatelessWidget {
     final resolvedNameStyle = fileNameStyle ??
         theme.textTheme.bodySmall?.copyWith(color: MagoColors.neutral500);
 
-    final hPad = size * 0.15;
+    final hPad = textPadding ?? size * 0.15;
 
     return Stack(
       fit: StackFit.expand,
