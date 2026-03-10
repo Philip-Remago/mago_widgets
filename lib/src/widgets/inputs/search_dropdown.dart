@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../helpers/constants.dart';
 import '../components/glass_container.dart';
@@ -64,9 +64,13 @@ class MagoSearchDropdown<T> extends StatefulWidget {
   State<MagoSearchDropdown<T>> createState() => _MagoSearchDropdownState<T>();
 }
 
-class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
+class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>>
+    with SingleTickerProviderStateMixin {
   late final TextEditingController _searchController;
   late final FocusNode _keyListenerFocusNode;
+  late final AnimationController _animController;
+  late final CurvedAnimation _curvedAnim;
+  late final Animation<Offset> _slideAnim;
   final _tapRegionGroupId = Object();
   OverlayEntry? _overlayEntry;
 
@@ -79,6 +83,19 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
     super.initState();
     _searchController = TextEditingController();
     _keyListenerFocusNode = FocusNode(skipTraversal: true);
+    _animController = AnimationController(
+      duration: const Duration(milliseconds: 180),
+      vsync: this,
+    );
+    _curvedAnim = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+    _slideAnim = Tween<Offset>(
+      begin: const Offset(0, -0.02),
+      end: Offset.zero,
+    ).animate(_curvedAnim);
     _filtered = List.of(widget.items);
   }
 
@@ -93,7 +110,10 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
 
   @override
   void dispose() {
-    _removeOverlay();
+    _curvedAnim.dispose();
+    _animController.dispose();
+    _overlayEntry?.remove();
+    _overlayEntry = null;
     _keyListenerFocusNode.dispose();
     _searchController.dispose();
     super.dispose();
@@ -148,9 +168,7 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
     if (_isOpen) {
       _removeOverlay();
     } else {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _showOverlay();
-      });
+      _showOverlay();
     }
   }
 
@@ -188,91 +206,101 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
           left: topLeft.dx,
           top: topLeft.dy + size.height + 4,
           width: size.width,
-          child: TapRegion(
-            groupId: _tapRegionGroupId,
-            onTapOutside: (_) => _removeOverlay(),
-            child: GlassContainer(
-              borderRadius: widget.borderRadius,
-              padding: EdgeInsets.zero,
-              child: Material(
-                color: Colors.transparent,
-                type: MaterialType.transparency,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-                      child: TextField(
-                        controller: _searchController,
-                        autofocus: false,
-                        textAlign: widget.textAlign,
-                        textCapitalization: widget.textCapitalization,
-                        style: inputStyle,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 10,
-                          ),
-                          prefixIcon: const Icon(Icons.search, size: 18),
-                          prefixIconConstraints: const BoxConstraints(
-                            minWidth: 36,
-                            minHeight: 0,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: widget.borderRadius,
-                            borderSide: BorderSide(
-                              color: theme.colorScheme.onSurface.withAlpha(60),
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: widget.borderRadius,
-                            borderSide: BorderSide(
-                              color: theme.colorScheme.onSurface.withAlpha(60),
-                            ),
-                          ),
-                          hintText: widget.placeholder ?? 'Search…',
-                          hintStyle: hintStyle,
-                          filled: true,
-                          fillColor: Colors.transparent,
-                        ),
-                        onChanged: _applyFilter,
-                      ),
-                    ),
-                    ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: widget.maxDropdownHeight,
-                      ),
-                      child: _filtered.isEmpty
-                          ? Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Text(
-                                'No results',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onSurface
-                                      .withAlpha(128),
+          child: FadeTransition(
+            opacity: _curvedAnim,
+            child: SlideTransition(
+              position: _slideAnim,
+              child: TapRegion(
+                groupId: _tapRegionGroupId,
+                onTapOutside: (_) => _removeOverlay(),
+                child: GlassContainer(
+                  borderRadius: widget.borderRadius,
+                  padding: EdgeInsets.zero,
+                  child: Material(
+                    color: Colors.transparent,
+                    type: MaterialType.transparency,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+                          child: TextField(
+                            controller: _searchController,
+                            autofocus: false,
+                            textAlign: widget.textAlign,
+                            textCapitalization: widget.textCapitalization,
+                            style: inputStyle,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 10,
+                              ),
+                              prefixIcon:
+                                  const Icon(LucideIcons.search, size: 16),
+                              prefixIconConstraints: const BoxConstraints(
+                                minWidth: 36,
+                                minHeight: 0,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: widget.borderRadius,
+                                borderSide: BorderSide(
+                                  color:
+                                      theme.colorScheme.onSurface.withAlpha(60),
                                 ),
                               ),
-                            )
-                          : ListView.builder(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              shrinkWrap: true,
-                              itemCount: _filtered.length,
-                              itemBuilder: (_, i) {
-                                final item = _filtered[i];
-                                final highlighted = i == _highlightIndex;
-                                return _DropdownItem<T>(
-                                  item: item,
-                                  label: widget.itemLabel(item),
-                                  subtitle: widget.itemSubtitle?.call(item),
-                                  leading: widget.itemLeading?.call(item),
-                                  highlighted: highlighted,
-                                  onTap: () => _selectItem(item),
-                                );
-                              },
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: widget.borderRadius,
+                                borderSide: BorderSide(
+                                  color:
+                                      theme.colorScheme.onSurface.withAlpha(60),
+                                ),
+                              ),
+                              hintText: widget.placeholder ?? 'Search…',
+                              hintStyle: hintStyle,
+                              filled: true,
+                              fillColor: Colors.transparent,
                             ),
+                            onChanged: _applyFilter,
+                          ),
+                        ),
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight: widget.maxDropdownHeight,
+                          ),
+                          child: _filtered.isEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Text(
+                                    'No results',
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: theme.colorScheme.onSurface
+                                          .withAlpha(128),
+                                    ),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4),
+                                  shrinkWrap: true,
+                                  itemCount: _filtered.length,
+                                  itemBuilder: (_, i) {
+                                    final item = _filtered[i];
+                                    final highlighted = i == _highlightIndex;
+                                    return _DropdownItem<T>(
+                                      item: item,
+                                      label: widget.itemLabel(item),
+                                      subtitle: widget.itemSubtitle?.call(item),
+                                      leading: widget.itemLeading?.call(item),
+                                      highlighted: highlighted,
+                                      onTap: () => _selectItem(item),
+                                    );
+                                  },
+                                ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -281,6 +309,7 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
       },
     );
     overlay.insert(_overlayEntry!);
+    _animController.forward(from: 0);
     setState(() {
       _isOpen = true;
     });
@@ -290,9 +319,11 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
     final entry = _overlayEntry;
     if (entry == null) return;
     _overlayEntry = null;
-    entry.remove();
     _isOpen = false;
     if (mounted) setState(() {});
+    _animController.reverse().whenComplete(() {
+      if (entry.mounted) entry.remove();
+    });
   }
 
   String get _displayText {
@@ -310,9 +341,11 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
 
     final textStyle = theme.textTheme.bodyMedium?.copyWith(
       color: theme.colorScheme.onSurface,
+      height: 1.0,
     );
     final hintStyle = theme.textTheme.bodyMedium?.copyWith(
       color: theme.colorScheme.onSurface.withAlpha(128),
+      height: 1.0,
     );
 
     final displayText = _displayText;
@@ -334,8 +367,8 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
             child: Row(
               children: [
                 Icon(
-                  Icons.search,
-                  size: 20,
+                  LucideIcons.search,
+                  size: 16,
                   color: theme.colorScheme.onSurface.withAlpha(160),
                 ),
                 const SizedBox(width: 8),
@@ -350,15 +383,15 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>> {
                   GestureDetector(
                     onTap: _clearSelection,
                     child: Icon(
-                      Icons.close,
-                      size: 18,
+                      LucideIcons.x,
+                      size: 16,
                       color: theme.colorScheme.onSurface.withAlpha(160),
                     ),
                   )
                 else
                   Icon(
-                    _isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                    size: 22,
+                    _isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+                    size: 16,
                     color: theme.colorScheme.onSurface.withAlpha(160),
                   ),
               ],
