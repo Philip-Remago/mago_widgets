@@ -10,13 +10,12 @@ class MagoMeetingCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.topLabel,
-    this.icon = Icons.phone,
+    this.icon,
     this.buttonText = 'Join',
     this.onButtonPressed,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.padding = const EdgeInsets.all(16),
     this.glassProperties,
-    this.iconColor,
   });
 
   final String topLabel;
@@ -25,7 +24,7 @@ class MagoMeetingCard extends StatelessWidget {
 
   final String subtitle;
 
-  final IconData icon;
+  final Widget? icon;
 
   final String buttonText;
 
@@ -34,7 +33,6 @@ class MagoMeetingCard extends StatelessWidget {
   final BorderRadius borderRadius;
   final EdgeInsets padding;
   final GlassProperties? glassProperties;
-  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -62,11 +60,7 @@ class MagoMeetingCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Icon(
-                icon,
-                size: 20,
-                color: iconColor ?? theme.colorScheme.onSurfaceVariant,
-              ),
+              if (icon != null) icon!,
             ],
           ),
           const SizedBox(height: 4),
@@ -89,7 +83,10 @@ class MagoMeetingCard extends StatelessWidget {
             child: MagoTextButton(
               text: buttonText,
               onPressed: onButtonPressed,
-              variant: MagoButtonVariant.outline,
+              variant: MagoButtonVariant.filled,
+              backgroundColor: theme.colorScheme.scrim,
+              foregroundColor: theme.colorScheme.onInverseSurface,
+              boxShadow: const [],
               minHeight: 36,
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
