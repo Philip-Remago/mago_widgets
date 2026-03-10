@@ -118,7 +118,11 @@ class _PineconeFallback extends StatelessWidget {
       child: Center(
         child: Opacity(
           opacity: 0.7,
-          child: SvgPicture.asset(asset),
+          child: FractionallySizedBox(
+            widthFactor: 0.5,
+            heightFactor: 0.5,
+            child: SvgPicture.asset(asset),
+          ),
         ),
       ),
     );

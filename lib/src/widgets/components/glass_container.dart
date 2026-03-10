@@ -9,6 +9,7 @@ class GlassContainer extends StatelessWidget {
     this.child,
     this.width,
     this.height,
+    this.constraints,
     this.borderRadius = const BorderRadius.all(Radius.circular(20)),
     this.padding,
     this.glassProperties = const GlassProperties(),
@@ -19,6 +20,8 @@ class GlassContainer extends StatelessWidget {
   final double? width;
 
   final double? height;
+
+  final BoxConstraints? constraints;
 
   final BorderRadius borderRadius;
 
@@ -42,6 +45,7 @@ class GlassContainer extends StatelessWidget {
     Widget content = Container(
       width: width,
       height: height,
+      constraints: constraints,
       decoration: BoxDecoration(
         color: resolvedBg,
         borderRadius: borderRadius,
