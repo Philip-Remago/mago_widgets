@@ -38,6 +38,8 @@ class MagoSearchDropdown<T> extends StatefulWidget {
   final TextCapitalization textCapitalization;
   final bool rootOverlay;
 
+  final ThemeData? dropdownTheme;
+
   const MagoSearchDropdown({
     super.key,
     required this.items,
@@ -58,6 +60,7 @@ class MagoSearchDropdown<T> extends StatefulWidget {
     this.textAlign = TextAlign.start,
     this.textCapitalization = TextCapitalization.none,
     this.rootOverlay = false,
+    this.dropdownTheme,
   });
 
   @override
@@ -192,9 +195,11 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>>
     _filtered = List.of(widget.items);
     _highlightIndex = _filtered.isNotEmpty ? 0 : -1;
 
+    final capturedTheme = widget.dropdownTheme ?? Theme.of(context);
+
     _overlayEntry = OverlayEntry(
       builder: (ctx) {
-        final theme = Theme.of(ctx);
+        final theme = capturedTheme;
         final hintStyle = theme.textTheme.bodyMedium?.copyWith(
           color: theme.colorScheme.onSurface.withAlpha(128),
         );
@@ -210,95 +215,100 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>>
             opacity: _curvedAnim,
             child: SlideTransition(
               position: _slideAnim,
-              child: TapRegion(
-                groupId: _tapRegionGroupId,
-                onTapOutside: (_) => _removeOverlay(),
-                child: GlassContainer(
-                  borderRadius: widget.borderRadius,
-                  padding: EdgeInsets.zero,
-                  child: Material(
-                    color: Colors.transparent,
-                    type: MaterialType.transparency,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-                          child: TextField(
-                            controller: _searchController,
-                            autofocus: false,
-                            textAlign: widget.textAlign,
-                            textCapitalization: widget.textCapitalization,
-                            style: inputStyle,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 10,
-                              ),
-                              prefixIcon:
-                                  const Icon(LucideIcons.search, size: 16),
-                              prefixIconConstraints: const BoxConstraints(
-                                minWidth: 36,
-                                minHeight: 0,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: widget.borderRadius,
-                                borderSide: BorderSide(
-                                  color:
-                                      theme.colorScheme.onSurface.withAlpha(60),
+              child: Theme(
+                data: theme,
+                child: TapRegion(
+                  groupId: _tapRegionGroupId,
+                  onTapOutside: (_) => _removeOverlay(),
+                  child: GlassContainer(
+                    borderRadius: widget.borderRadius,
+                    padding: EdgeInsets.zero,
+                    child: Material(
+                      color: Colors.transparent,
+                      type: MaterialType.transparency,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+                            child: TextField(
+                              controller: _searchController,
+                              autofocus: false,
+                              textAlign: widget.textAlign,
+                              textCapitalization: widget.textCapitalization,
+                              style: inputStyle,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 10,
                                 ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: widget.borderRadius,
-                                borderSide: BorderSide(
-                                  color:
-                                      theme.colorScheme.onSurface.withAlpha(60),
+                                prefixIcon:
+                                    const Icon(LucideIcons.search, size: 16),
+                                prefixIconConstraints: const BoxConstraints(
+                                  minWidth: 36,
+                                  minHeight: 0,
                                 ),
-                              ),
-                              hintText: widget.placeholder ?? 'Search…',
-                              hintStyle: hintStyle,
-                              filled: true,
-                              fillColor: Colors.transparent,
-                            ),
-                            onChanged: _applyFilter,
-                          ),
-                        ),
-                        ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxHeight: widget.maxDropdownHeight,
-                          ),
-                          child: _filtered.isEmpty
-                              ? Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Text(
-                                    'No results',
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: theme.colorScheme.onSurface
-                                          .withAlpha(128),
-                                    ),
+                                border: OutlineInputBorder(
+                                  borderRadius: widget.borderRadius,
+                                  borderSide: BorderSide(
+                                    color: theme.colorScheme.onSurface
+                                        .withAlpha(60),
                                   ),
-                                )
-                              : ListView.builder(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 4),
-                                  shrinkWrap: true,
-                                  itemCount: _filtered.length,
-                                  itemBuilder: (_, i) {
-                                    final item = _filtered[i];
-                                    final highlighted = i == _highlightIndex;
-                                    return _DropdownItem<T>(
-                                      item: item,
-                                      label: widget.itemLabel(item),
-                                      subtitle: widget.itemSubtitle?.call(item),
-                                      leading: widget.itemLeading?.call(item),
-                                      highlighted: highlighted,
-                                      onTap: () => _selectItem(item),
-                                    );
-                                  },
                                 ),
-                        ),
-                      ],
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: widget.borderRadius,
+                                  borderSide: BorderSide(
+                                    color: theme.colorScheme.onSurface
+                                        .withAlpha(60),
+                                  ),
+                                ),
+                                hintText: widget.placeholder ?? 'Search…',
+                                hintStyle: hintStyle,
+                                filled: true,
+                                fillColor: Colors.transparent,
+                              ),
+                              onChanged: _applyFilter,
+                            ),
+                          ),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: widget.maxDropdownHeight,
+                            ),
+                            child: _filtered.isEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Text(
+                                      'No results',
+                                      style:
+                                          theme.textTheme.bodyMedium?.copyWith(
+                                        color: theme.colorScheme.onSurface
+                                            .withAlpha(128),
+                                      ),
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 4),
+                                    shrinkWrap: true,
+                                    itemCount: _filtered.length,
+                                    itemBuilder: (_, i) {
+                                      final item = _filtered[i];
+                                      final highlighted = i == _highlightIndex;
+                                      return _DropdownItem<T>(
+                                        item: item,
+                                        label: widget.itemLabel(item),
+                                        subtitle:
+                                            widget.itemSubtitle?.call(item),
+                                        leading: widget.itemLeading?.call(item),
+                                        highlighted: highlighted,
+                                        onTap: () => _selectItem(item),
+                                      );
+                                    },
+                                  ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

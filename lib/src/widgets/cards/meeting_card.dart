@@ -66,7 +66,9 @@ class MagoMeetingCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             title,
-            style: theme.textTheme.titleMedium,
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
