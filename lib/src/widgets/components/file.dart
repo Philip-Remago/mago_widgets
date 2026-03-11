@@ -179,15 +179,12 @@ class MagoFilePreview extends StatelessWidget {
                         alignment: Alignment.topCenter,
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: hPad),
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              fileName!,
-                              maxLines: 2,
-                              textAlign: TextAlign.center,
-                              overflow: TextOverflow.ellipsis,
-                              style: resolvedNameStyle,
-                            ),
+                          child: Text(
+                            fileName!,
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                            style: resolvedNameStyle,
                           ),
                         ),
                       ),
@@ -202,15 +199,12 @@ class MagoFilePreview extends StatelessWidget {
             child: Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: hPad),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    fileName!,
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    style: resolvedNameStyle,
-                  ),
+                child: Text(
+                  fileName!,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: resolvedNameStyle,
                 ),
               ),
             ),
