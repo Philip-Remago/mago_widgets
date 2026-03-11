@@ -2,6 +2,7 @@ name: mago_widgets
 description: "A reusable Flutter widget library with dark/light theme support."
 version: 0.0.1
 homepage:
+publish_to: none
 
 environment:
   sdk: ^3.6.1
@@ -29,7 +30,10 @@ dependencies:
   pdfrx_engine: ^0.1.12            # was ^0.3.0
   permission_handler: ^11.3.1      # was ^12.0.1
   pretty_qr_code: ^3.3.0
-  three_js: ^0.2.7
+  fluter_three_js:
+    git:
+      url: https://github.com/Philip-Remago/flutter_three_js.git
+      ref: main
   three_js_controls: ^0.2.2
   three_js_math: ^0.2.6
   youtube_explode_dart: ^3.0.5
