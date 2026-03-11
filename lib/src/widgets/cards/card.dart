@@ -16,6 +16,7 @@ class MagoCard extends StatelessWidget {
     this.child,
     this.borderRadius = const BorderRadius.all(Radius.circular(8)),
     this.glassProperties,
+    this.inset = 4.0,
   });
 
   final String title;
@@ -30,7 +31,7 @@ class MagoCard extends StatelessWidget {
 
   final GlassProperties? glassProperties;
 
-  static const double _inset = 4.0;
+  final double inset;
 
   bool get _hasUrl => imageUrl?.trim().isNotEmpty ?? false;
 
@@ -40,7 +41,7 @@ class MagoCard extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final innerRadius = MagoBorderRadiusCalculator().calculate(
       borderRadius,
-      _inset,
+      inset,
       Directionality.of(context),
     );
 
@@ -69,7 +70,7 @@ class MagoCard extends StatelessWidget {
             Expanded(
               flex: 8,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(_inset, _inset, _inset, 0),
+                padding: EdgeInsets.fromLTRB(inset, inset, inset, 0),
                 child: ClipRRect(
                   borderRadius: innerRadius,
                   child: child != null
