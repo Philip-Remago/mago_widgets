@@ -19,10 +19,22 @@ class MagoToast {
     MagoToastType type = MagoToastType.success,
     Duration displayDuration = const Duration(seconds: 3),
     Duration animationDuration = const Duration(milliseconds: 350),
+    Brightness? brightness,
   }) {
     final overlay = Overlay.of(context);
     late final OverlayEntry overlayEntry;
     late final _ToastEntry record;
+
+    final baseTheme = Theme.of(context);
+    final effectiveTheme = brightness != null
+        ? ThemeData(
+            brightness: brightness,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: baseTheme.colorScheme.primary,
+              brightness: brightness,
+            ),
+          )
+        : null;
 
     void remove() {
       if (!overlayEntry.mounted) return;
@@ -31,17 +43,21 @@ class MagoToast {
       _repositionAll();
     }
 
+    Widget toastWidget() => _ToastWidget(
+          key: record.widgetKey,
+          title: title,
+          description: description,
+          type: type,
+          displayDuration: displayDuration,
+          animationDuration: animationDuration,
+          bottomOffset: _edgeMargin,
+          onDismissed: remove,
+        );
+
     overlayEntry = OverlayEntry(
-      builder: (_) => _ToastWidget(
-        key: record.widgetKey,
-        title: title,
-        description: description,
-        type: type,
-        displayDuration: displayDuration,
-        animationDuration: animationDuration,
-        bottomOffset: _edgeMargin,
-        onDismissed: remove,
-      ),
+      builder: (_) => effectiveTheme != null
+          ? Theme(data: effectiveTheme, child: toastWidget())
+          : toastWidget(),
     );
 
     record = _ToastEntry(
