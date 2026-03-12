@@ -56,7 +56,9 @@ class _MagoImageFileInputState extends State<MagoImageFileInput> {
       } else {
         final result = await FilePicker.platform.pickFiles(
           type: FileType.image,
+          allowMultiple: false,
           withData: true,
+          lockParentWindow: true,
         );
         picked = result?.files.firstOrNull?.bytes;
       }
