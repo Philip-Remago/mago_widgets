@@ -23,6 +23,10 @@ class MagoPopupDialog extends StatelessWidget {
     this.child = const SizedBox(height: 200),
   });
 
+  // Guard duration for iOS phantom-tap workaround.
+  // See: https://github.com/flutter/flutter/issues/177992
+  static const _iosBarrierGuard = Duration(milliseconds: 500);
+
   static Future<T?> show<T>(
     BuildContext context, {
     bool barrierDismissible = true,
@@ -33,14 +37,16 @@ class MagoPopupDialog extends StatelessWidget {
     Widget child = const SizedBox(height: 200),
     Duration transitionDuration = const Duration(milliseconds: 280),
   }) {
+    final openedAt = DateTime.now();
+
     return showGeneralDialog<T>(
       context: context,
-      barrierDismissible: barrierDismissible,
+      barrierDismissible: false,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: Colors.black54,
       transitionDuration: transitionDuration,
       pageBuilder: (dialogContext, animation, secondaryAnimation) {
-        return SafeArea(
+        Widget dialog = SafeArea(
           child: Center(
             child: MagoPopupDialog(
               padding: padding,
@@ -50,6 +56,18 @@ class MagoPopupDialog extends StatelessWidget {
               child: child,
             ),
           ),
+        );
+
+        if (!barrierDismissible) return dialog;
+
+        return TapRegion(
+          onTapOutside: (_) {
+            if (DateTime.now().difference(openedAt) < _iosBarrierGuard) return;
+            if (Navigator.canPop(dialogContext)) {
+              Navigator.pop(dialogContext);
+            }
+          },
+          child: dialog,
         );
       },
       transitionBuilder:

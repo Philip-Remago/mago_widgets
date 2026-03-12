@@ -116,6 +116,7 @@ class MagoPopoverAnchorState extends State<MagoPopoverAnchor>
     with SingleTickerProviderStateMixin {
   OverlayEntry? _entry;
   bool _barrierEnabled = true;
+  DateTime? _shownAt;
 
   MagoPopoverPosition? _resolvedPosition;
   Offset? _resolvedOffset;
@@ -184,8 +185,13 @@ class MagoPopoverAnchorState extends State<MagoPopoverAnchor>
     }
   }
 
+  // Guard duration for iOS phantom-tap workaround.
+  // See: https://github.com/flutter/flutter/issues/177992
+  static const _iosBarrierGuard = Duration(milliseconds: 500);
+
   void _show() {
     if (_entry != null) return;
+    _shownAt = DateTime.now();
 
     final overlay = Overlay.of(context, rootOverlay: true);
 
@@ -310,7 +316,15 @@ class MagoPopoverAnchorState extends State<MagoPopoverAnchor>
                           ignoring: !_barrierEnabled,
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
-                            onTap: _remove,
+                            onTap: () {
+                              final shown = _shownAt;
+                              if (shown != null &&
+                                  DateTime.now().difference(shown) <
+                                      _iosBarrierGuard) {
+                                return;
+                              }
+                              _remove();
+                            },
                             child: const SizedBox.expand(),
                           ),
                         )
