@@ -132,17 +132,27 @@ class MagoFilePreview extends StatelessWidget {
       children: [
         image,
         Positioned.fill(
-          child: Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: hPad),
-              child: Text(
-                fileName!,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: resolvedNameStyle,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: textSpacing),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: hPad),
+                    child: Text(
+                      fileName!,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: resolvedNameStyle,
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ],
