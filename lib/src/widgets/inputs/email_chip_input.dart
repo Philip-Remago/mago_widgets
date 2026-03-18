@@ -22,6 +22,7 @@ class MagoEmailChipInput extends StatefulWidget {
 
   final bool autofocus;
   final bool commitOnFocusLost;
+  final FocusNode? focusNode;
 
   final TextAlign textAlign;
   final TextCapitalization textCapitalization;
@@ -40,6 +41,7 @@ class MagoEmailChipInput extends StatefulWidget {
     this.chipDeleteColor,
     this.autofocus = false,
     this.commitOnFocusLost = true,
+    this.focusNode,
     this.textAlign = TextAlign.start,
     this.textCapitalization = TextCapitalization.none,
   });
@@ -51,13 +53,19 @@ class MagoEmailChipInput extends StatefulWidget {
 class _MagoEmailChipInputState extends State<MagoEmailChipInput> {
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
+  bool _ownsFocusNode = false;
 
   late List<String> _emails;
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _focusNode = FocusNode();
+    if (widget.focusNode != null) {
+      _focusNode = widget.focusNode!;
+    } else {
+      _focusNode = FocusNode();
+      _ownsFocusNode = true;
+    }
 
     _emails = [...widget.initialEmails];
 
@@ -70,7 +78,7 @@ class _MagoEmailChipInputState extends State<MagoEmailChipInput> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    if (_ownsFocusNode) _focusNode.dispose();
     _controller.dispose();
     super.dispose();
   }
