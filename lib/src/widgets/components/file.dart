@@ -33,6 +33,8 @@ class MagoFilePreview extends StatelessWidget {
 
   final double? textPadding;
 
+  final bool showFileName;
+
   const MagoFilePreview({
     super.key,
     required this.state,
@@ -45,6 +47,7 @@ class MagoFilePreview extends StatelessWidget {
     this.fileTypeStyle,
     this.fileNameStyle,
     this.textPadding,
+    this.showFileName = false,
   });
 
   @override
@@ -63,7 +66,7 @@ class MagoFilePreview extends StatelessWidget {
       case FilePreviewState.loading:
         return _buildLoading();
       case FilePreviewState.loadedWithPreview:
-        return _buildPreview();
+        return _buildPreview(context);
       case FilePreviewState.loadedNoPreview:
         return _buildNoPreview(context);
     }
@@ -86,7 +89,7 @@ class MagoFilePreview extends StatelessWidget {
     );
   }
 
-  Widget _buildPreview() {
+  Widget _buildPreview(BuildContext context) {
     final ImageProvider provider;
     if (previewImage != null) {
       provider = MemoryImage(previewImage!);
@@ -96,7 +99,7 @@ class MagoFilePreview extends StatelessWidget {
       return _buildLoading();
     }
 
-    return Image(
+    final image = Image(
       image: provider,
       fit: BoxFit.contain,
       width: size,
@@ -108,6 +111,36 @@ class MagoFilePreview extends StatelessWidget {
         return _buildLoading();
       },
       errorBuilder: (_, __, ___) => _buildLoading(),
+    );
+
+    final hasFileName =
+        showFileName && fileName != null && fileName!.isNotEmpty;
+    if (!hasFileName) return image;
+
+    final theme = Theme.of(context);
+    final resolvedNameStyle = fileNameStyle ??
+        theme.textTheme.bodySmall?.copyWith(color: MagoColors.neutral500);
+    final hPad = textPadding ?? size * 0.15;
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        image,
+        Positioned.fill(
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: hPad),
+              child: Text(
+                fileName!,
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: resolvedNameStyle,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
