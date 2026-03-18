@@ -23,6 +23,8 @@ class MagoFilePreview extends StatelessWidget {
 
   final String? previewUrl;
 
+  final String? previewAsset;
+
   final double size;
 
   final double textSpacing;
@@ -42,6 +44,7 @@ class MagoFilePreview extends StatelessWidget {
     this.fileType = '',
     this.previewImage,
     this.previewUrl,
+    this.previewAsset,
     this.size = 130,
     this.textSpacing = 55.0,
     this.fileTypeStyle,
@@ -95,6 +98,8 @@ class MagoFilePreview extends StatelessWidget {
       provider = MemoryImage(previewImage!);
     } else if (previewUrl != null) {
       provider = NetworkImage(previewUrl!);
+    } else if (previewAsset != null) {
+      provider = AssetImage(previewAsset!);
     } else {
       return _buildLoading();
     }
