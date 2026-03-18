@@ -24,6 +24,7 @@ class MagoLargeActionPopupDialog {
     MagoDialogValueBuilder<T>? cancelValueBuilder,
     double maxHeightFactor = 0.85,
     EdgeInsets contentPadding = const EdgeInsets.all(20),
+    MagoDialogPosition anchorPosition = MagoDialogPosition.center,
   }) {
     return MagoPopupDialog.show<T>(
       context,
@@ -32,6 +33,7 @@ class MagoLargeActionPopupDialog {
       width: width,
       borderRadius: borderRadius,
       backgroundColor: backgroundColor,
+      anchorPosition: anchorPosition,
       child: _LargeActionDialogContent<T>(
         title: title,
         child: child,
