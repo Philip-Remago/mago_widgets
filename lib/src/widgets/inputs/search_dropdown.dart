@@ -237,6 +237,10 @@ class _MagoSearchDropdownState<T> extends State<MagoSearchDropdown<T>>
                               textAlign: widget.textAlign,
                               textCapitalization: widget.textCapitalization,
                               style: inputStyle,
+                              autocorrect: false,
+                              enableSuggestions: false,
+                              smartDashesType: SmartDashesType.disabled,
+                              smartQuotesType: SmartQuotesType.disabled,
                               decoration: InputDecoration(
                                 isDense: true,
                                 contentPadding: const EdgeInsets.symmetric(

@@ -106,6 +106,10 @@ class _MagoTextInputBodyState extends State<_MagoTextInputBody> {
         textAlign: widget.input.textAlign,
         textCapitalization: widget.input.textCapitalization,
         style: textStyle,
+        autocorrect: false,
+        enableSuggestions: false,
+        smartDashesType: SmartDashesType.disabled,
+        smartQuotesType: SmartQuotesType.disabled,
         expands: widget.input.height != null && widget.input.maxLines == 1
             ? false
             : false,

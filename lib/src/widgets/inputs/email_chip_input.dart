@@ -195,6 +195,10 @@ class _MagoEmailChipInputState extends State<MagoEmailChipInput> {
                 textAlign: widget.textAlign,
                 textCapitalization: widget.textCapitalization,
                 style: textStyle,
+                autocorrect: false,
+                enableSuggestions: false,
+                smartDashesType: SmartDashesType.disabled,
+                smartQuotesType: SmartQuotesType.disabled,
                 decoration: InputDecoration(
                   isDense: true,
                   contentPadding: EdgeInsets.zero,

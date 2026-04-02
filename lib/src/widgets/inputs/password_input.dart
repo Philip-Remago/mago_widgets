@@ -101,6 +101,8 @@ class _MagoPasswordInputBodyState extends State<_MagoPasswordInputBody> {
               obscureText: _obscure,
               enableSuggestions: false,
               autocorrect: false,
+              smartDashesType: SmartDashesType.disabled,
+              smartQuotesType: SmartQuotesType.disabled,
               decoration: InputDecoration(
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
