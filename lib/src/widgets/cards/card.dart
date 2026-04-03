@@ -47,7 +47,7 @@ class MagoCard extends StatelessWidget {
 
     return GlassContainer(
       borderRadius: borderRadius,
-      glassProperties: (glassProperties ?? const GlassProperties()).copyWith(
+      glassProperties: glassProperties?.copyWith(
         boxShadow: glassProperties?.boxShadow ??
             [
               BoxShadow(

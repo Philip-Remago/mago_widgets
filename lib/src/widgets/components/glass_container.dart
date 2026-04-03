@@ -27,20 +27,37 @@ class GlassContainer extends StatelessWidget {
 
   final EdgeInsetsGeometry? padding;
 
-  final GlassProperties glassProperties;
+  final GlassProperties? glassProperties;
 
   @override
   Widget build(BuildContext context) {
+    final props = glassProperties;
+
+    if (props == null) {
+      Widget plain = SizedBox(
+        width: width,
+        height: height,
+        child: child != null
+            ? (padding != null
+                ? Padding(padding: padding!, child: child)
+                : child)
+            : null,
+      );
+      if (constraints != null) {
+        plain = ConstrainedBox(constraints: constraints!, child: plain);
+      }
+      return ClipRRect(borderRadius: borderRadius, child: plain);
+    }
+
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final bgBase = glassProperties.backgroundColor ??
+    final bgBase = props.backgroundColor ??
         (isDark
             ? theme.colorScheme.surfaceContainer
             : theme.colorScheme.surface);
 
-    final resolvedBg =
-        bgBase.withValues(alpha: glassProperties.backgroundOpacity);
+    final resolvedBg = bgBase.withValues(alpha: props.backgroundOpacity);
 
     Widget content = Container(
       width: width,
@@ -49,21 +66,21 @@ class GlassContainer extends StatelessWidget {
       decoration: BoxDecoration(
         color: resolvedBg,
         borderRadius: borderRadius,
-        border: glassBorder(context, properties: glassProperties),
+        border: glassBorder(context, properties: props),
       ),
       child: child != null
           ? (padding != null ? Padding(padding: padding!, child: child) : child)
           : null,
     );
 
-    if (glassProperties.blurSigma > 0) {
+    if (props.blurSigma > 0) {
       content = ClipRRect(
         borderRadius: borderRadius,
-        clipBehavior: glassProperties.clipBehavior,
+        clipBehavior: props.clipBehavior,
         child: BackdropFilter(
           filter: ImageFilter.blur(
-            sigmaX: glassProperties.blurSigma,
-            sigmaY: glassProperties.blurSigma,
+            sigmaX: props.blurSigma,
+            sigmaY: props.blurSigma,
           ),
           child: content,
         ),
@@ -71,17 +88,16 @@ class GlassContainer extends StatelessWidget {
     } else {
       content = ClipRRect(
         borderRadius: borderRadius,
-        clipBehavior: glassProperties.clipBehavior,
+        clipBehavior: props.clipBehavior,
         child: content,
       );
     }
 
-    if (glassProperties.boxShadow != null &&
-        glassProperties.boxShadow!.isNotEmpty) {
+    if (props.boxShadow != null && props.boxShadow!.isNotEmpty) {
       return DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: borderRadius,
-          boxShadow: glassProperties.boxShadow!,
+          boxShadow: props.boxShadow!,
         ),
         child: content,
       );
