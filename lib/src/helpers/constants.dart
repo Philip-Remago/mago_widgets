@@ -53,7 +53,7 @@ class GlassProperties {
   }
 }
 
-GradientBoxBorder glassBorder(
+GradientBoxBorder? glassBorder(
   BuildContext context, {
   GlassProperties properties = const GlassProperties(),
   double? borderWidth,
@@ -61,7 +61,9 @@ GradientBoxBorder glassBorder(
   Color? borderColor,
 }) {
   final effectiveWidth = borderWidth ?? properties.borderWidth;
+  if (effectiveWidth <= 0) return null;
   final effectiveOpacity = borderOpacity ?? properties.borderOpacity;
+  if (effectiveOpacity <= 0) return null;
   final effectiveColor = borderColor ?? properties.borderColor;
 
   final theme = Theme.of(context);
