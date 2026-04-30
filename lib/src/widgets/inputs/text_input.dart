@@ -72,7 +72,7 @@ class _MagoTextInputBodyState extends State<_MagoTextInputBody> {
     if (cb != null) {
       cb.call();
     } else {
-      Navigator.of(context).pop(true);
+      Navigator.of(context).pop();
     }
   }
 

@@ -206,8 +206,14 @@ class MagoPopoverAnchorState extends State<MagoPopoverAnchor>
           builder: (overlayContext, constraints) {
             if (!mounted) return const SizedBox.shrink();
 
-            final overlayBox = overlayContext.findRenderObject() as RenderBox?;
-            final targetBox = context.findRenderObject() as RenderBox?;
+            RenderBox? overlayBox;
+            RenderBox? targetBox;
+            try {
+              overlayBox = overlayContext.findRenderObject() as RenderBox?;
+              targetBox = context.findRenderObject() as RenderBox?;
+            } catch (_) {
+              return const SizedBox.shrink();
+            }
 
             if (overlayBox == null || targetBox == null || !targetBox.hasSize) {
               return const SizedBox.shrink();
