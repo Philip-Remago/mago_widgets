@@ -19,6 +19,8 @@ class MagoTextInput extends StatelessWidget {
   final double? height;
   final double? width;
 
+  final EdgeInsetsGeometry? padding;
+
   final VoidCallback? onSubmittedPop;
 
   final TextAlign textAlign;
@@ -36,6 +38,7 @@ class MagoTextInput extends StatelessWidget {
     this.borderRadius = const BorderRadius.all(Radius.circular(4)),
     this.height,
     this.width,
+    this.padding,
     this.onSubmittedPop,
     this.textAlign = TextAlign.start,
     this.textCapitalization = TextCapitalization.none,
@@ -90,10 +93,17 @@ class _MagoTextInputBodyState extends State<_MagoTextInputBody> {
       color: theme.colorScheme.onSurface.withAlpha(128),
     );
 
+    final hasFixedHeight = widget.input.height != null;
+    final padding = widget.input.padding ??
+        EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: hasFixedHeight ? 0 : 14,
+        );
+
     return GlassContainer(
       height: widget.input.height,
       width: widget.input.width,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      padding: padding,
       borderRadius: widget.input.borderRadius,
       glassProperties: GlassProperties(backgroundColor: fillColor),
       child: TextField(
@@ -104,6 +114,7 @@ class _MagoTextInputBodyState extends State<_MagoTextInputBody> {
         keyboardType: widget.input.keyboardType,
         textInputAction: widget.input.textInputAction,
         textAlign: widget.input.textAlign,
+        textAlignVertical: TextAlignVertical.center,
         textCapitalization: widget.input.textCapitalization,
         style: textStyle,
         autocorrect: false,
