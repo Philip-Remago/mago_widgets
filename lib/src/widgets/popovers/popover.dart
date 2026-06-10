@@ -68,6 +68,7 @@ class MagoPopoverAnchor extends StatefulWidget {
     this.autoFlip = true,
     this.popoverPadding = const EdgeInsets.all(8),
     this.popoverBackgroundColor,
+    this.popoverBackgroundOpacity,
     this.popoverBorderRadius = const BorderRadius.all(Radius.circular(12)),
     this.elevation = 6,
     this.showArrow = true,
@@ -97,6 +98,12 @@ class MagoPopoverAnchor extends StatefulWidget {
 
   final EdgeInsets popoverPadding;
   final Color? popoverBackgroundColor;
+
+  /// Fill opacity for the popover background, 0..1.
+  ///
+  /// When null the default frosted-glass opacity (0.2) is used. Provide a
+  /// higher value (e.g. 0.9) for a more solid, less translucent background.
+  final double? popoverBackgroundOpacity;
   final BorderRadius popoverBorderRadius;
   final double elevation;
 
@@ -256,6 +263,7 @@ class MagoPopoverAnchorState extends State<MagoPopoverAnchor>
               child: _PopoverGlass(
                 borderRadius: widget.popoverBorderRadius,
                 backgroundColor: widget.popoverBackgroundColor,
+                backgroundOpacity: widget.popoverBackgroundOpacity,
                 padding: widget.popoverPadding,
                 arrowSide: arrowSide,
                 arrowOffset: arrowOffset,
@@ -983,6 +991,7 @@ class _PopoverGlass extends StatelessWidget {
   const _PopoverGlass({
     required this.borderRadius,
     this.backgroundColor,
+    this.backgroundOpacity,
     this.padding,
     this.arrowSide,
     this.arrowOffset = 0,
@@ -993,6 +1002,7 @@ class _PopoverGlass extends StatelessWidget {
 
   final BorderRadius borderRadius;
   final Color? backgroundColor;
+  final double? backgroundOpacity;
   final EdgeInsets? padding;
   final _ArrowSide? arrowSide;
   final double arrowOffset;
@@ -1011,7 +1021,7 @@ class _PopoverGlass extends StatelessWidget {
             : theme.colorScheme.surface);
     final brdBase = theme.colorScheme.onSurface;
 
-    const bgOpacity = 0.2;
+    final bgOpacity = backgroundOpacity ?? 0.2;
     const borderOpacity = 0.3;
     const borderWidth = 0.5;
     const blurSigma = 10.0;
